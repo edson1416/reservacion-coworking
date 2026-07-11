@@ -7,6 +7,7 @@ import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
 import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
 import com.edsonsarmiento.reservacioncoworking.auth.service.AuthService;
 import com.edsonsarmiento.reservacioncoworking.auth.service.JwtService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<?> register(@RequestBody RegistroRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegistroRequest request) {
         AuthResponse response = authService.registrarUsuario(request);
         return ResponseEntity.ok(response);
     }
