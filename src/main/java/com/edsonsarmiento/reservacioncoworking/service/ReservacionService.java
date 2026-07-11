@@ -1,6 +1,7 @@
 package com.edsonsarmiento.reservacioncoworking.service;
 
 import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
+import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
 import com.edsonsarmiento.reservacioncoworking.dto.NuevaReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.dto.ReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.entity.Reservacion;
@@ -24,11 +25,15 @@ public class ReservacionService {
     private final ReservacionRepository reservacionRepository;
     private final SalaRepository salaRepository;
     private final ReservacionMapper reservacionMapper;
+    private final UserRepository userRepository;
+    private final NotificacionService notificacionService;
 
-    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper) {
+    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper, NotificacionService notificacionService, UserRepository userRepository) {
         this.reservacionRepository = reservacionRepository;
         this.salaRepository = salaRepository;
         this.reservacionMapper = reservacionMapper;
+        this.notificacionService = notificacionService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -68,9 +73,14 @@ public class ReservacionService {
     @Transactional
     public ReservacionDto confirmarReservacion(Long idReservacion) {
         Reservacion reservacion = buscarReservacion(idReservacion);
+        User user = userRepository.findById(reservacion.getIdUsuario()).orElseThrow(()->new RuntimeException("No se encontro el usuario"));
         reservacion.confirmar();
 
-        return reservacionMapper.entityToDto(reservacionRepository.save(reservacion));
+        ReservacionDto reservacionDto = reservacionMapper.entityToDto(reservacionRepository.save(reservacion));
+
+        notificacionService.envairCorreoConfirmacion(user.getEmail(), idReservacion);
+
+        return reservacionDto;
     }
 
     @Transactional
