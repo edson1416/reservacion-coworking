@@ -45,6 +45,12 @@ public class ReservacionController {
         return ResponseEntity.status(HttpStatus.OK).body(reservacionService.confirmarReservacion(id));
     }
 
+    @PostMapping("/completar/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ReservacionDto> completarReservacion(@Valid @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(reservacionService.completarReservacion(id));
+    }
+
     @PostMapping("/cancelar/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ReservacionDto> cancelarReservacion(@Valid @PathVariable Long id) {

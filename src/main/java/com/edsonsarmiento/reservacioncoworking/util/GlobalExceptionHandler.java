@@ -99,4 +99,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(ServicioInestableException.class)
+    public ResponseEntity<Map<String,String>> handleServicioInestableException(ServicioInestableException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }

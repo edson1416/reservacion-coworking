@@ -1,6 +1,8 @@
 package com.edsonsarmiento.reservacioncoworking.auth.config;
 
 import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
+import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.Duration;
 
 @Configuration
 public class ApplicationConfig {
@@ -45,6 +50,12 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.defaults().withConnectTimeout(Duration.ofSeconds(2)).withReadTimeout(Duration.ofSeconds(2));
+        return builder.requestFactorySettings(settings).build();
     }
 
 }

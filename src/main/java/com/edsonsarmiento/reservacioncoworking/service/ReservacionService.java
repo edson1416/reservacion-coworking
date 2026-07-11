@@ -27,13 +27,15 @@ public class ReservacionService {
     private final ReservacionMapper reservacionMapper;
     private final UserRepository userRepository;
     private final NotificacionService notificacionService;
+    private final ValidacionPagoService validacionPagoService;
 
-    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper, NotificacionService notificacionService, UserRepository userRepository) {
+    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper, NotificacionService notificacionService, UserRepository userRepository, ValidacionPagoService validacionPagoService) {
         this.reservacionRepository = reservacionRepository;
         this.salaRepository = salaRepository;
         this.reservacionMapper = reservacionMapper;
         this.notificacionService = notificacionService;
         this.userRepository = userRepository;
+        this.validacionPagoService = validacionPagoService;
     }
 
     @Transactional
@@ -81,6 +83,15 @@ public class ReservacionService {
         notificacionService.envairCorreoConfirmacion(user.getEmail(), idReservacion);
 
         return reservacionDto;
+    }
+
+    @Transactional
+    public ReservacionDto completarReservacion(Long idReservacion) {
+        Reservacion reservacion = buscarReservacion(idReservacion);
+
+        validacionPagoService.validarPago(reservacion);
+
+        return reservacionMapper.entityToDto(reservacionRepository.save(reservacion));
     }
 
     @Transactional
