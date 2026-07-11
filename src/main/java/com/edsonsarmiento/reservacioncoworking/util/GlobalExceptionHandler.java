@@ -1,6 +1,7 @@
 package com.edsonsarmiento.reservacioncoworking.util;
 
 import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
+import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -9,6 +10,7 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,5 +44,30 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", "Correo o contraseña incorrectos");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
+    @ExceptionHandler(SalaNoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> handleSalaNoEncontradaException(SalaNoEncontradaException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, Object>> handleTypeMismatchException(MethodArgumentTypeMismatchException exception){
+        Map<String, Object> errorResponse = new HashMap<>();
+
+        String nombreParametro = exception.getName();
+        String tipoRequerido = exception.getRequiredType() != null ? exception.getRequiredType().getSimpleName() : "desconocido";
+        Object valorParametro = exception.getValue();
+
+        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+        errorResponse.put("error", "Parámetro de ruta inválido");
+        errorResponse.put("mensaje", String.format(
+                "El parámetro '%s' debe ser un número entero de tipo %s. Valor recibido: '%s'",
+                nombreParametro, tipoRequerido, valorParametro
+        ));
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

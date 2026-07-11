@@ -8,6 +8,6 @@ public interface SalaServiceInterface {
     List<SalaDto> listarSalas();
     SalaDto buscarSalaPorId(Long id);
     SalaDto registrarSala(SalaDto salaDto);
-    SalaDto editarrSala(SalaDto salaDto);
+    SalaDto editarrSala(SalaDto salaDto, Long id);
     void borrarSala(Long id);
 }

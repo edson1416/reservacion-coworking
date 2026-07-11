@@ -2,9 +2,10 @@ package com.edsonsarmiento.reservacioncoworking.service;
 
 
 import com.edsonsarmiento.reservacioncoworking.dto.SalaDto;
+import com.edsonsarmiento.reservacioncoworking.entity.Sala;
+import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
 import com.edsonsarmiento.reservacioncoworking.mapper.SalaMapper;
 import com.edsonsarmiento.reservacioncoworking.repository.SalaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,21 +28,37 @@ public class SalaService implements SalaServiceInterface{
 
     @Override
     public SalaDto buscarSalaPorId(Long id) {
-        return null;
+        Sala sala = buscarSala(id);
+        return salaMapper.entityToDto(sala);
     }
 
     @Override
     public SalaDto registrarSala(SalaDto salaDto) {
-        return null;
+        Sala sala = salaMapper.dtoToEntity(salaDto);
+        return salaMapper.entityToDto(salaRepository.save(sala));
     }
 
     @Override
-    public SalaDto editarrSala(SalaDto salaDto) {
-        return null;
+    public SalaDto editarrSala(SalaDto salaDto, Long id) {
+        Sala sala = buscarSala(id);
+        sala.setNombre(salaDto.getNombre());
+        sala.setTipo(salaDto.getTipo());
+        sala.setCapacidad(salaDto.getCapacidad());
+        sala.setUbicacion(salaDto.getUbicacion());
+        sala.setTarifa(salaDto.getTarifa());
+        salaRepository.save(sala);
+
+        return salaMapper.entityToDto(salaRepository.save(sala));
     }
 
     @Override
     public void borrarSala(Long id) {
-
+        Sala sala = buscarSala(id);
+        salaRepository.delete(sala);
     }
+
+    public Sala buscarSala(Long id) {
+        return salaRepository.findById(id).orElseThrow(()-> new SalaNoEncontradaException("No se encontro el sala"));
+    }
+
 }
