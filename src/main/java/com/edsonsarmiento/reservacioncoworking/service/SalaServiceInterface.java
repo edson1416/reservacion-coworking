@@ -9,5 +9,5 @@ public interface SalaServiceInterface {
     SalaDto buscarSalaPorId(Long id);
     SalaDto registrarSala(SalaDto salaDto);
     SalaDto editarrSala(SalaDto salaDto, Long id);
-    void borrarSala(Long id);
+    SalaDto borrarSala(Long id);
 }

@@ -52,9 +52,10 @@ public class SalaService implements SalaServiceInterface{
     }
 
     @Override
-    public void borrarSala(Long id) {
+    public SalaDto borrarSala(Long id) {
         Sala sala = buscarSala(id);
         salaRepository.delete(sala);
+        return salaMapper.entityToDto(sala);
     }
 
     public Sala buscarSala(Long id) {

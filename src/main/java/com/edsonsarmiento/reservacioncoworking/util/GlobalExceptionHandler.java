@@ -1,8 +1,6 @@
 package com.edsonsarmiento.reservacioncoworking.util;
 
-import com.edsonsarmiento.reservacioncoworking.exceptions.ChoqueHorariosException;
-import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
-import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
+import com.edsonsarmiento.reservacioncoworking.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -75,6 +73,27 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ChoqueHorariosException.class)
     public ResponseEntity<Map<String, String>> handleChoqueHorarioException(ChoqueHorariosException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(ReservacionNoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> handleReservacionNoEncontrada(ReservacionNoEncontradaException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(AccesoReservacionException.class)
+    public ResponseEntity<Map<String, String>> handleAccesoReservacionException(AccesoReservacionException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException exception){
         Map<String, String> response = new HashMap<>();
         response.put("error", exception.getMessage());
         return ResponseEntity.badRequest().body(response);
