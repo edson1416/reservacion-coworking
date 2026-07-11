@@ -2,9 +2,11 @@ package com.edsonsarmiento.reservacioncoworking.service;
 
 import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
 import com.edsonsarmiento.reservacioncoworking.dto.NuevaReservacionDto;
+import com.edsonsarmiento.reservacioncoworking.dto.ReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.entity.Reservacion;
 import com.edsonsarmiento.reservacioncoworking.exceptions.ChoqueHorariosException;
 import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
+import com.edsonsarmiento.reservacioncoworking.mapper.ReservacionMapper;
 import com.edsonsarmiento.reservacioncoworking.repository.ReservacionRepository;
 import com.edsonsarmiento.reservacioncoworking.repository.SalaRepository;
 import org.springframework.security.core.Authentication;
@@ -19,10 +21,12 @@ public class ReservacionService {
 
     private final ReservacionRepository reservacionRepository;
     private final SalaRepository salaRepository;
+    private final ReservacionMapper reservacionMapper;
 
-    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository) {
+    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper) {
         this.reservacionRepository = reservacionRepository;
         this.salaRepository = salaRepository;
+        this.reservacionMapper = reservacionMapper;
     }
 
     @Transactional
@@ -47,6 +51,12 @@ public class ReservacionService {
         reservacion.setHoraSalida(dto.getHoraSalida());
 
         reservacionRepository.save(reservacion);
+    }
+
+    public List<ReservacionDto> obtenerReservacionesPorUsuario() {
+        Long idUsuario = obtenerIdUsuario();
+        List<Reservacion> lista = reservacionRepository.findAllByIdUsuarioOrderByHoraEntradaDesc(idUsuario);
+        return reservacionMapper.listReservacionToListReservacionDto(lista);
     }
 
     private Long obtenerIdUsuario() {

@@ -20,4 +20,6 @@ public interface ReservacionRepository extends JpaRepository<Reservacion, Long> 
             @Param("entrada")LocalDateTime entrada,
             @Param("salida") LocalDateTime salida,
             @Param("estados") List<String> estados);
+
+    List<Reservacion> findAllByIdUsuarioOrderByHoraEntradaDesc( Long idUsuario);
 }
