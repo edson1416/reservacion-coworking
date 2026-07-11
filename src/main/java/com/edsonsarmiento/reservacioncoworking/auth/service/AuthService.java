@@ -2,10 +2,14 @@ package com.edsonsarmiento.reservacioncoworking.auth.service;
 
 import com.edsonsarmiento.reservacioncoworking.auth.Role;
 import com.edsonsarmiento.reservacioncoworking.auth.dto.AuthResponse;
+import com.edsonsarmiento.reservacioncoworking.auth.dto.LoginRequest;
 import com.edsonsarmiento.reservacioncoworking.auth.dto.RegistroRequest;
 import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
 import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
 import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +18,16 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtService jwtService) {
+                       JwtService jwtService,
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
     }
 
     public AuthResponse registrarUsuario(RegistroRequest request) {
@@ -40,6 +47,18 @@ public class AuthService {
         }
 
         userRepository.save(user);
+
+        String jwtToken = jwtService.generateToken(user);
+
+        return new AuthResponse(jwtToken);
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+
+        User user = userRepository.findByEmail(request.email()).orElseThrow();
 
         String jwtToken = jwtService.generateToken(user);
 

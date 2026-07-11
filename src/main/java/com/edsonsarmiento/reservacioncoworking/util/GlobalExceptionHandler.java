@@ -1,8 +1,11 @@
 package com.edsonsarmiento.reservacioncoworking.util;
 
 import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,5 +35,12 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("error", exception.getMessage());
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class, InternalAuthenticationServiceException.class})
+    public ResponseEntity<Map<String, String>> handleErrorCredenciales(Exception exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Correo o contraseña incorrectos");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }
