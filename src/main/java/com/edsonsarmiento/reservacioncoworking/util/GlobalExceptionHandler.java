@@ -1,5 +1,6 @@
 package com.edsonsarmiento.reservacioncoworking.util;
 
+import com.edsonsarmiento.reservacioncoworking.exceptions.ChoqueHorariosException;
 import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
 import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,4 +72,12 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ChoqueHorariosException.class)
+    public ResponseEntity<Map<String, String>> handleChoqueHorarioException(ChoqueHorariosException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }
