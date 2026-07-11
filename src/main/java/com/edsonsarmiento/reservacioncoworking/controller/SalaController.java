@@ -8,17 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/sala")
+@RequestMapping("/api/sala")
 public class SalaController {
 
-    private SalaService salaService;
+    private final SalaService salaService;
+
+    public SalaController(SalaService salaService) {
+        this.salaService = salaService;
+    }
 
     @GetMapping
     public ResponseEntity<?> listarSalas(){
-        try{
-            return new ResponseEntity<>(salaService.listarSalas(), HttpStatus.OK);
-        }catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(salaService.listarSalas(), HttpStatus.OK);
     }
 }

@@ -12,8 +12,13 @@ import java.util.List;
 @Service
 public class SalaService implements SalaServiceInterface{
 
-    private SalaRepository salaRepository;
-    private SalaMapper salaMapper;
+    private final SalaRepository salaRepository;
+    private final SalaMapper salaMapper;
+
+    public SalaService(SalaRepository salaRepository, SalaMapper salaMapper) {
+        this.salaRepository = salaRepository;
+        this.salaMapper = salaMapper;
+    }
 
     @Override
     public List<SalaDto> listarSalas() {
