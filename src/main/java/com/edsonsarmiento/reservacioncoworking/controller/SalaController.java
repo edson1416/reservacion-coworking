@@ -5,6 +5,7 @@ import com.edsonsarmiento.reservacioncoworking.service.SalaService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,26 +19,31 @@ public class SalaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> listarSalas(){
         return new ResponseEntity<>(salaService.listarSalas(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<SalaDto> buscarSalaPorId(@PathVariable Long id){
         return new ResponseEntity<>(salaService.buscarSalaPorId(id), HttpStatus.OK);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SalaDto> registrarSala(@Valid @RequestBody SalaDto salaDto){
         return new ResponseEntity<>(salaService.registrarSala(salaDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SalaDto> editarrSala(@Valid @RequestBody SalaDto salaDto, @PathVariable Long id){
         return new ResponseEntity<>(salaService.editarrSala(salaDto, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> borrarSala(@PathVariable Long id){
         salaService.borrarSala(id);
         return new ResponseEntity<>("Sala eliminada correctamente",HttpStatus.OK);
