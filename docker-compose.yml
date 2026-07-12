@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # DB de Desarrollo
+  db-dev:
+    image: postgres:16-alpine
+    container_name: coworking-db-dev
+    restart: always
+    environment:
+      POSTGRES_DB: db_coworking
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5443:5432"
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    networks:
+      - coworking-network
+
+  # DB de Producción
+  db-prod:
+    image: postgres:16-alpine
+    container_name: coworking-db-prod
+    restart: always
+    environment:
+      POSTGRES_DB: db_coworking_prod
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5444:5432"
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    networks:
+      - coworking-network
+
+  # Proyecto
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coworking-app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DEV_DB_URL=jdbc:postgresql://db-dev:5432/db_coworking
+      - DEV_DB_USER=postgres
+      - DEV_DB_PASS=password
+
+      - PROD_DB_URL=jdbc:postgresql://db-prod:5432/db_coworking_prod
+      - PROD_DB_USER=postgres
+      - PROD_DB_PASS=password
+
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - db-dev
+      - db-prod
+    networks:
+      - coworking-network
+
+volumes:
+  pgdata_dev:
+  pgdata_prod:
+
+networks:
+  coworking-network:
+    driver: bridge
