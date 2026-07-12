@@ -7,7 +7,6 @@ import com.edsonsarmiento.reservacioncoworking.auth.dto.RegistroRequest;
 import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
 import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
 import com.edsonsarmiento.reservacioncoworking.exceptions.EmailExisteException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
