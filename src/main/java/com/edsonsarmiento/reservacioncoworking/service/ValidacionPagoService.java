@@ -1,6 +1,7 @@
 package com.edsonsarmiento.reservacioncoworking.service;
 
 import com.edsonsarmiento.reservacioncoworking.entity.Reservacion;
+import com.edsonsarmiento.reservacioncoworking.exceptions.PagoRechazadoException;
 import com.edsonsarmiento.reservacioncoworking.exceptions.ServicioInestableException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class ValidacionPagoService {
             ResponseEntity<String> response = restTemplate.getForEntity(MOCK_PAYMENT_URL + reservacion.getId(), String.class);
 
             if (!response.getStatusCode().is2xxSuccessful()) {
-                log.error("El método de pago fue rechazado por el banco");
+                throw new PagoRechazadoException("El método de pago fue rechazado por el banco");
             }
 
             reservacion.completar();

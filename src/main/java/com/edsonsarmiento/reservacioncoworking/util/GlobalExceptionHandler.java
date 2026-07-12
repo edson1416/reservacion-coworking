@@ -113,4 +113,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(PagoRechazadoException.class)
+    public ResponseEntity<Map<String,String>> handlePagoRechazadoException(PagoRechazadoException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }
