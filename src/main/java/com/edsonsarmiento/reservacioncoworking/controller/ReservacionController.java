@@ -39,19 +39,19 @@ public class ReservacionController {
         return reservacionService.listadoReservaciones();
     }
 
-    @PostMapping("/confirmar/{id}")
+    @PostMapping("/{id}/confirmar")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ReservacionDto> confirmarReservacion(@Valid @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(reservacionService.confirmarReservacion(id));
     }
 
-    @PostMapping("/completar/{id}")
+    @PostMapping("/{id}/completar")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ReservacionDto> completarReservacion(@Valid @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(reservacionService.completarReservacion(id));
     }
 
-    @PostMapping("/cancelar/{id}")
+    @PostMapping("/{id}/cancelar")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ReservacionDto> cancelarReservacion(@Valid @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(reservacionService.cancelarReservacion(id));
