@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${PROD_DB_URL}
+    username: ${PROD_DB_USER} # Usando variables de entorno por seguridad
+    password: ${PROD_DB_PASS}
+  jpa:
+    hibernate:
+      #ddl-auto: validate
+      ddl-auto: update
+    show-sql: false
+
+# Propiedades estrictas para producción
+app:
+  coworking:
+    horas-operativas: 12 # En producción se opera más tiempo

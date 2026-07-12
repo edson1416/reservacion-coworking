@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: dev # Perfil por defecto
+  config:
+    import: "optional:file:.env[.properties]"
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+# Propiedades globales que pueden tener valores por defecto
+app:
+  coworking:
+    horas-operativas: 12
+    zona-horaria: "America/El_Salvador"

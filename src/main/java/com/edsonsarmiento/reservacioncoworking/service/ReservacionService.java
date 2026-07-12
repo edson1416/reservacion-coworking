@@ -2,6 +2,7 @@ package com.edsonsarmiento.reservacioncoworking.service;
 
 import com.edsonsarmiento.reservacioncoworking.auth.entity.User;
 import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
+import com.edsonsarmiento.reservacioncoworking.config.CoworkingProperties;
 import com.edsonsarmiento.reservacioncoworking.dto.NuevaReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.dto.OcupacionSalaDto;
 import com.edsonsarmiento.reservacioncoworking.dto.ReporteDto;
@@ -35,14 +36,16 @@ public class ReservacionService {
     private final UserRepository userRepository;
     private final NotificacionService notificacionService;
     private final ValidacionPagoService validacionPagoService;
+    private final CoworkingProperties coworkingProperties;
 
-    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper, NotificacionService notificacionService, UserRepository userRepository, ValidacionPagoService validacionPagoService) {
+    public ReservacionService(ReservacionRepository reservacionRepository, SalaRepository salaRepository, ReservacionMapper reservacionMapper, NotificacionService notificacionService, UserRepository userRepository, ValidacionPagoService validacionPagoService, CoworkingProperties coworkingProperties) {
         this.reservacionRepository = reservacionRepository;
         this.salaRepository = salaRepository;
         this.reservacionMapper = reservacionMapper;
         this.notificacionService = notificacionService;
         this.userRepository = userRepository;
         this.validacionPagoService = validacionPagoService;
+        this.coworkingProperties = coworkingProperties;
     }
 
     @CacheEvict(value = "ocupacionSalas", allEntries = true)
@@ -148,7 +151,7 @@ public class ReservacionService {
         LocalDateTime fin = reporte.getFechaFin().atTime(LocalTime.MAX);
 
         long diasEnRango = ChronoUnit.DAYS.between(reporte.getFechaInicio(), reporte.getFechaFin()) +1 ;
-        long horasOperativasDia = 12;
+        long horasOperativasDia = coworkingProperties.getHorasOperativas();
         long totalHorasPosibles = diasEnRango * horasOperativasDia;
 
         List<Sala> salas = salaRepository.findAll();

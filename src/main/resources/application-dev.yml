@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: c
+    username: ${DEV_DB_USER}
+    password: ${DEV_DB_PASS}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Sobrescribimos o agregamos propiedades específicas de DEV
+app:
+  coworking:
+    horas-operativas: 10 # En dev operamos menos horas para pruebas
