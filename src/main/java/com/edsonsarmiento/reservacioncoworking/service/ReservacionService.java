@@ -5,10 +5,8 @@ import com.edsonsarmiento.reservacioncoworking.auth.repository.UserRepository;
 import com.edsonsarmiento.reservacioncoworking.dto.NuevaReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.dto.ReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.entity.Reservacion;
-import com.edsonsarmiento.reservacioncoworking.exceptions.AccesoReservacionException;
-import com.edsonsarmiento.reservacioncoworking.exceptions.ChoqueHorariosException;
-import com.edsonsarmiento.reservacioncoworking.exceptions.ReservacionNoEncontradaException;
-import com.edsonsarmiento.reservacioncoworking.exceptions.SalaNoEncontradaException;
+import com.edsonsarmiento.reservacioncoworking.entity.Sala;
+import com.edsonsarmiento.reservacioncoworking.exceptions.*;
 import com.edsonsarmiento.reservacioncoworking.mapper.ReservacionMapper;
 import com.edsonsarmiento.reservacioncoworking.repository.ReservacionRepository;
 import com.edsonsarmiento.reservacioncoworking.repository.SalaRepository;
@@ -17,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -41,11 +41,17 @@ public class ReservacionService {
     @Transactional
     public ReservacionDto crearReservacion(NuevaReservacionDto dto) {
 
+        long horasReservacion = ChronoUnit.HOURS.between(dto.getHoraEntrada(),dto.getHoraSalida());
+
+        if (horasReservacion < 1) {
+            throw new NumeroHorasMinException("La reservacion debe de ser minimo de 1 hora");
+        }
+
         Long idUsuario = obtenerUsuario().getId();
 
         List<String> estadosOcupados = List.of("PENDING", "CONFIRMED");
 
-        salaRepository.findById(dto.getIdSala()).orElseThrow(()-> new SalaNoEncontradaException("No se encontro el sala"));
+        Sala sala = salaRepository.findById(dto.getIdSala()).orElseThrow(()-> new SalaNoEncontradaException("No se encontro el sala"));
 
         boolean hayChoque = reservacionRepository.existeCruceDeHorarios(dto.getIdSala(),dto.getHoraEntrada(),dto.getHoraSalida(),estadosOcupados);
 
@@ -53,11 +59,14 @@ public class ReservacionService {
             throw new ChoqueHorariosException("La sala ya está reservada durante ese rango de horario");
         }
 
+        double totalPagar = sala.getTarifa()*horasReservacion;
+
         Reservacion reservacion = new Reservacion();
         reservacion.setIdSala(dto.getIdSala());
         reservacion.setIdUsuario(idUsuario);
         reservacion.setHoraEntrada(dto.getHoraEntrada());
         reservacion.setHoraSalida(dto.getHoraSalida());
+        reservacion.setTotalPagar(totalPagar);
 
         return reservacionMapper.entityToDto(reservacionRepository.save(reservacion));
     }

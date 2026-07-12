@@ -23,6 +23,7 @@ public class Reservacion {
     private LocalDateTime horaEntrada;
     private LocalDateTime horaSalida;
     private String estado;
+    private double totalPagar;
 
     @Transient
     private ReservacionState estadoLogico;

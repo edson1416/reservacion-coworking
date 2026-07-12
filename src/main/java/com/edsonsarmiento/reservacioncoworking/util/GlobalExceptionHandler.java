@@ -106,4 +106,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(NumeroHorasMinException.class)
+    public ResponseEntity<Map<String,String>> handleNumeroHorasMinException(NumeroHorasMinException exception){
+        Map<String, String> response = new HashMap<>();
+        response.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(response);
+    }
+
 }

@@ -12,4 +12,5 @@ public class ReservacionDto {
     private LocalDateTime horaEntrada;
     private LocalDateTime horaSalida;
     private String estado;
+    private double totalPagar;
 }
