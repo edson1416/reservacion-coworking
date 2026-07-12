@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # DB de Desarrollo
   db-dev:
@@ -51,7 +49,7 @@ services:
       - PROD_DB_USER=postgres
       - PROD_DB_PASS=password
 
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=dev
     depends_on:
       - db-dev
       - db-prod
