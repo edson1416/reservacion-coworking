@@ -1,6 +1,8 @@
 package com.edsonsarmiento.reservacioncoworking.controller;
 
 import com.edsonsarmiento.reservacioncoworking.dto.NuevaReservacionDto;
+import com.edsonsarmiento.reservacioncoworking.dto.OcupacionSalaDto;
+import com.edsonsarmiento.reservacioncoworking.dto.ReporteDto;
 import com.edsonsarmiento.reservacioncoworking.dto.ReservacionDto;
 import com.edsonsarmiento.reservacioncoworking.service.ReservacionService;
 import jakarta.validation.Valid;
@@ -55,5 +57,10 @@ public class ReservacionController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<ReservacionDto> cancelarReservacion(@Valid @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(reservacionService.cancelarReservacion(id));
+    }
+
+    @PostMapping("/reporte")
+    public ResponseEntity<List<OcupacionSalaDto>> reporteOcupacionSala(@Valid @RequestBody ReporteDto request){
+        return ResponseEntity.ok(reservacionService.reporteOcupacionSala(request));
     }
 }

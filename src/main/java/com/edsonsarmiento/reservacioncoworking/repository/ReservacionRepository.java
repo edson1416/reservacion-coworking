@@ -22,4 +22,7 @@ public interface ReservacionRepository extends JpaRepository<Reservacion, Long> 
             @Param("estados") List<String> estados);
 
     List<Reservacion> findAllByIdUsuarioOrderByHoraEntradaDesc( Long idUsuario);
+
+    @Query("SELECT r FROM Reservacion r WHERE r.horaEntrada >= :inicio AND r.horaSalida <= :fin AND r.estado = 'COMPLETED'")
+    List<Reservacion> reservacionPorRango(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 }
